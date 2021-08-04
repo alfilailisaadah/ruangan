@@ -8,4 +8,5 @@ func main() {
 	fmt.Println("ini")
 	fmt.Println("A")
 	fmt.Println("B")
+	fmt.Println("F")
 }
