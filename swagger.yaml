@@ -1,0 +1,402 @@
+---
+swagger: "2.0"
+info:
+  description: this is the documentation off room rental app
+  version: 1.0.0
+  title: Swagger Petstore
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: alfilailisaadahr@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: petstore.swagger.io
+basePath: /v2
+tags:
+- name: rooms
+  description: Everything about room
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+- name: user
+  description: user devide into two admin and borrower
+schemes:
+- http
+paths:
+  /rooms:
+    post:
+      tags:
+      - rooms
+      summary: Add a new room into building
+      operationId: addRoom
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Room object that needs to be added to the store
+        required: true
+        schema:
+          $ref: '#/definitions/Room'
+      responses:
+        "405":
+          description: Invalid input
+    put:
+      tags:
+      - rooms
+      summary: Update an existing room
+      operationId: updatePet
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Room object that needs to be added to the building
+        required: true
+        schema:
+          $ref: '#/definitions/Room'
+      responses:
+        "400":
+          description: Invalid ID building
+        "404":
+          description: Room not found
+        "405":
+          description: Validation exception
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /rooms/findById:
+    get:
+      tags:
+      - rooms
+      summary: Finds Room by id
+      description: showing room with matches id
+      operationId: findRoomsById
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: true
+        type: array
+        items:
+          type: string
+          default: available
+          enum:
+          - available
+          - pending
+          - sold
+        collectionFormat: multi
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Room'
+        "400":
+          description: Invalid status value
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /rooms/{roomId}:
+    get:
+      tags:
+      - rooms
+      summary: Find room by ID
+      description: Returns a single room
+      operationId: getRoomById
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: roomId
+        in: path
+        description: ID of room to return
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Room'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Room not found
+      security:
+      - api_key: []
+    post:
+      tags:
+      - rooms
+      summary: Updates a room in the store with form data
+      operationId: updateRoomWithForm
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: roomId
+        in: path
+        description: ID of pet that needs to be updated
+        required: true
+        type: integer
+        format: int64
+      - name: name
+        in: formData
+        description: Updated name of the room
+        required: false
+        type: string
+      - name: status
+        in: formData
+        description: Updated status of the room
+        required: false
+        type: string
+      responses:
+        "405":
+          description: Invalid input
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+    delete:
+      tags:
+      - rooms
+      summary: Deletes a room
+      operationId: deleteRoom
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: api_key
+        in: header
+        required: false
+        type: string
+      - name: roomId
+        in: path
+        description: Room id to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Room not found
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /rooms/{roomId}/uploadImage:
+    post:
+      tags:
+      - rooms
+      summary: uploads an image
+      operationId: uploadFile
+      consumes:
+      - multipart/form-data
+      produces:
+      - application/json
+      parameters:
+      - name: roomId
+        in: path
+        description: ID of room to update
+        required: true
+        type: integer
+        format: int64
+      - name: additionalMetadata
+        in: formData
+        description: Additional data to pass to server
+        required: false
+        type: string
+      - name: file
+        in: formData
+        description: file to upload
+        required: false
+        type: file
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+  /user:
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Created user object
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        default:
+          description: successful operation
+  /user/login:
+    get:
+      tags:
+      - user
+      summary: Logs user into the system
+      operationId: loginUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: query
+        description: The user name for login
+        required: true
+        type: string
+      - name: password
+        in: query
+        description: The password for login in clear text
+        required: true
+        type: string
+      responses:
+        "200":
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              type: integer
+              format: int32
+              description: calls per hour allowed by the user
+            X-Expires-After:
+              type: string
+              format: date-time
+              description: date in UTC when token expires
+          schema:
+            type: string
+        "400":
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+      - user
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      produces:
+      - application/json
+      - application/xml
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  /user/{username}:
+    delete:
+      tags:
+      - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: path
+        description: The name that needs to be deleted
+        required: true
+        type: string
+      responses:
+        "400":
+          description: Invalid username supplied
+        "404":
+          description: User not found
+securityDefinitions:
+  petstore_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: string
+        format: int32
+        description: User Status
+    xml:
+      name: User
+  Room:
+    type: object
+    required:
+    - name
+    properties:
+      id:
+        type: integer
+        format: int64
+      price:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: uranus
+      status:
+        type: string
+        description: room status in the building
+        enum:
+        - available
+        - pending
+        - sold
+    xml:
+      name: Pet
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
