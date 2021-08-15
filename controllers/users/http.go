@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"net/http"
 	"rentRoom/businesses/users"
 	controller "rentRoom/controllers"
@@ -28,6 +29,7 @@ func (ctrl *UserController) Store(c echo.Context) error {
 	}
 
 	err := ctrl.userUseCase.Store(ctx, req.ToDomain())
+	fmt.Println(req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

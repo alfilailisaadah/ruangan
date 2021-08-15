@@ -9,7 +9,8 @@ type Users struct {
 	Id        int       `json:"id"`
 	Name      string    `json:"name"`
 	Username  string    `json:"username"`
-	Password  string    `json:"-"`
+	Password  string    `json:"password"`
+	UserType  string    `json:"user_type"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -20,6 +21,7 @@ func FromDomain(domain users.Domain) Users {
 		Name:      domain.Name,
 		Username:  domain.Username,
 		Password:  domain.Password,
+		UserType:  domain.UserType,
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdatedAt,
 	}

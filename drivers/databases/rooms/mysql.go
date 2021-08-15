@@ -7,59 +7,54 @@ import (
 	"gorm.io/gorm"
 )
 
-type mysqlRoomsRepository struct {
-	Conn *gorm.DB
+type roomsRepository struct {
+	conn *gorm.DB
 }
 
-func NewMySQLRoomsRepository(conn *gorm.DB) rooms.Repository {
-	return &mysqlRoomsRepository{
-		Conn: conn,
+func NewRoomsRepository(conn *gorm.DB) rooms.Repository {
+	return &roomsRepository{
+		conn: conn,
 	}
 }
 
-func (nr *mysqlRoomsRepository) Fetch(ctx context.Context, page, perpage int) ([]rooms.Domain, int, error) {
+func (nr *roomsRepository) Store(ctx context.Context, newsDomain *rooms.Domain) (rooms.Domain, error) {
+	rec := fromDomain(newsDomain)
+
+	result := nr.conn.Create(&rec)
+	if result.Error != nil {
+		return rooms.Domain{}, result.Error
+	}
+
+	return rec.ToDomain(), nil
+}
+
+func (cr *roomsRepository) Find(ctx context.Context, rentStatus string) ([]rooms.Domain, error) {
 	rec := []Rooms{}
 
-	offset := (page - 1) * perpage
-	err := nr.Conn.Offset(offset).Limit(perpage).Find(&rec).Error
-	if err != nil {
-		return []rooms.Domain{}, 0, err
+	query := cr.conn
+
+	if rentStatus != "" {
+		query = query.Where("rentStatus = ?", rentStatus)
 	}
 
-	var totalData int64
-	err = nr.Conn.Count(&totalData).Error
+	err := query.Find(&rec).Error
 	if err != nil {
-		return []rooms.Domain{}, 0, err
+		return []rooms.Domain{}, err
 	}
 
-	var domainRooms []rooms.Domain
+	categoryDomain := []rooms.Domain{}
 	for _, value := range rec {
-		domainRooms = append(domainRooms, value.toDomain())
+		categoryDomain = append(categoryDomain, value.ToDomain())
 	}
-	return domainRooms, int(totalData), nil
+
+	return categoryDomain, nil
 }
 
-func (nr *mysqlRoomsRepository) GetByID(ctx context.Context, roomsId int) (rooms.Domain, error) {
+func (cr *roomsRepository) FindByID(id int) (rooms.Domain, error) {
 	rec := Rooms{}
-	return rec.toDomain(), nil
-}
 
-func (nr *mysqlRoomsRepository) GetByTitle(ctx context.Context, roomsTitle string) (rooms.Domain, error) {
-	rec := Rooms{}
-	err := nr.Conn.Where("title = ?", roomsTitle).First(&rec).Error
-	if err != nil {
+	if err := cr.conn.Where("id = ?", id).First(&rec).Error; err != nil {
 		return rooms.Domain{}, err
 	}
-	return rec.toDomain(), nil
-}
-
-func (nr *mysqlRoomsRepository) Store(ctx context.Context, roomsDomain *rooms.Domain) error {
-	rec := fromDomain(roomsDomain)
-
-	result := nr.Conn.Create(rec)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
+	return rec.ToDomain(), nil
 }

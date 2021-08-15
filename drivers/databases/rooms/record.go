@@ -1,33 +1,40 @@
 package rooms
 
 import (
-	roomsUsecase "rentRoom/businesses/rooms"
+	"rentRoom/businesses/rooms"
+	"rentRoom/drivers/databases/buildings"
 	"time"
 )
 
 type Rooms struct {
-	Id        int
-	HargaPinjam     int
-	StatusPinjam   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	UserStat  string
+	ID          int
+	RoomName       	string
+	RentStatus 		bool
+	RentPrice      	int
+	BuildingId	int
+	Building 	buildings.Buildings
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
-func fromDomain(domain *roomsUsecase.Domain) *Rooms {
+func fromDomain(domain *rooms.Domain) *Rooms {
 	return &Rooms{
-		Id:       domain.Id,
-		HargaPinjam:    domain.HargaPinjam,
-		StatusPinjam:  domain.StatusPinjam,
+		RoomName:       domain.RoomName,
+		RentStatus: 	domain.RentStatus,
+		RentPrice:      domain.RentPrice,
+		BuildingId: 	domain.BuildingId,
 	}
 }
 
-func (rec *Rooms) toDomain() roomsUsecase.Domain {
-	return roomsUsecase.Domain{
-		Id:        rec.Id,
-		HargaPinjam:    rec.HargaPinjam,
-		StatusPinjam:  rec.StatusPinjam,
-		CreatedAt: rec.CreatedAt,
-		UpdatedAt: rec.UpdatedAt,
+func (rec *Rooms) ToDomain() rooms.Domain {
+	return rooms.Domain{
+		ID:        		rec.ID,
+		RoomName:       rec.RoomName,
+		RentStatus: 	rec.RentStatus,
+		RentPrice:      rec.RentPrice,
+		BuildingId:		rec.BuildingId,
+		BuildingName:	rec.Building.BuildingName,
+		CreatedAt: 		rec.CreatedAt,
+		UpdatedAt: 		rec.UpdatedAt,
 	}
 }

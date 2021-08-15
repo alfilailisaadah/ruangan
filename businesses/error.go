@@ -9,11 +9,11 @@ var (
 
 	ErrIDNotFound = errors.New("id not found")
 
-	ErrRoomsIDResource = errors.New("(RoomsID) not found or empty")
+	ErrBuildingsIDResource = errors.New("(BuildingsID) not found or empty")
 
-	ErrRoomsTitleResource = errors.New("(RoomsTitle) not found or empty")
+	ErrBuildingsTitleResource = errors.New("(BuildingsTitle) not found or empty")
 
-	ErrCategoryNotFound = errors.New("category not found")
+	ErrRoomsNotFound = errors.New("rooms not found")
 
 	ErrDuplicateData = errors.New("duplicate data")
 

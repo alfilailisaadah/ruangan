@@ -10,6 +10,7 @@ type Domain struct {
 	Name      string
 	Username  string
 	Password  string
+	UserType  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

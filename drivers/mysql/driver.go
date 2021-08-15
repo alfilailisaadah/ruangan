@@ -3,9 +3,6 @@ package mysql_driver
 import (
 	"fmt"
 	"log"
-	categoryRepo "rentRoom/drivers/databases/category"
-	roomsRepo "rentRoom/drivers/databases/rooms"
-	usersRepo "rentRoom/drivers/databases/users"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -31,12 +28,6 @@ func (config *ConfigDB) InitialDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	db.AutoMigrate(
-		&roomsRepo.Rooms{},
-		&categoryRepo.Category{},
-		&usersRepo.Users{},
-	)
 
 	return db
 }

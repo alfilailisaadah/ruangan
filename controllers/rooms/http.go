@@ -3,36 +3,52 @@ package rooms
 import (
 	"net/http"
 	"rentRoom/businesses/rooms"
-	controller "rentRoom/controllers"
 	"rentRoom/controllers/rooms/request"
+	"rentRoom/controllers/rooms/response"
+
+	controller "rentRoom/controllers"
 
 	echo "github.com/labstack/echo/v4"
 )
 
 type RoomsController struct {
-	roomsUseCase rooms.Usecase
+	roomsUsecase rooms.Usecase
 }
 
-func NewRoomsController(roomsUC rooms.Usecase) *RoomsController {
+func NewRoomsController(cu rooms.Usecase) *RoomsController {
 	return &RoomsController{
-		roomsUseCase: roomsUC,
+		roomsUsecase: cu,
 	}
+}
+
+func (ctrl *RoomsController) GetAll(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	resp, err := ctrl.roomsUsecase.GetAll(ctx)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	responseController := []response.Rooms{}
+	for _, value := range resp {
+		responseController = append(responseController, response.FromDomain(value))
+	}
+
+	return controller.NewSuccessResponse(c, responseController)
 }
 
 func (ctrl *RoomsController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
-
-	ip := c.QueryParam("ip")
 
 	req := request.Rooms{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	err := ctrl.roomsUseCase.Store(ctx, ip, req.ToDomain())
+	resp, err := ctrl.roomsUsecase.Store(ctx,req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return controller.NewSuccessResponse(c, "Successfully inserted")
+	return controller.NewSuccessResponse(c, response.FromDomain(resp))
 }

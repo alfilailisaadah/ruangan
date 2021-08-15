@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 	"rentRoom/businesses/users"
 
 	"gorm.io/gorm"
@@ -61,6 +62,7 @@ func (nr *mysqlUsersRepository) Store(ctx context.Context, userDomain *users.Dom
 	rec := fromDomain(*userDomain)
 
 	result := nr.Conn.Create(rec)
+	fmt.Println(result)
 	if result.Error != nil {
 		return result.Error
 	}

@@ -3,74 +3,61 @@ package rooms
 import (
 	"context"
 	"rentRoom/businesses"
-	"rentRoom/businesses/category"
-	"strings"
 	"time"
 )
 
 type roomsUsecase struct {
-	roomsRepository  Repository
-	categoryUsecase category.Usecase
-	contextTimeout  time.Duration
+	roomsRespository Repository
+	contextTimeout      time.Duration
 }
 
-func NewRoomsUsecase(nr Repository, cu category.Usecase, timeout time.Duration) Usecase {
+func NewRoomsUsecase(timeout time.Duration, cr Repository) Usecase {
 	return &roomsUsecase{
-		roomsRepository:  nr,
-		categoryUsecase: cu,
-		contextTimeout:  timeout,
+		contextTimeout:      timeout,
+		roomsRespository: cr,
 	}
 }
 
-func (nu *roomsUsecase) Fetch(ctx context.Context, page, perpage int) ([]Domain, int, error) {
+func (nu *roomsUsecase) Store(ctx context.Context, newsDomain *Domain) (Domain, error) {
 	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
 	defer cancel()
 
-	if page <= 0 {
-		page = 1
-	}
-	if perpage <= 0 {
-		perpage = 25
-	}
-
-	res, total, err := nu.roomsRepository.Fetch(ctx, page, perpage)
-	if err != nil {
-		return []Domain{}, 0, err
-	}
-
-	return res, total, nil
-}
-func (nu *roomsUsecase) GetByID(ctx context.Context, roomsId int) (Domain, error) {
-	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
-	defer cancel()
-
-	if roomsId <= 0 {
-		return Domain{}, businesses.ErrRoomsIDResource
-	}
-	res, err := nu.roomsRepository.GetByID(ctx, roomsId)
+	result, err := nu.roomsRespository.Store(ctx, newsDomain)
 	if err != nil {
 		return Domain{}, err
 	}
 
-	return res, nil
+	return result, nil
 }
-func (nu *roomsUsecase) GetByTitle(ctx context.Context, roomsTitle string) (Domain, error) {
-	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
-	defer cancel()
-
-	if strings.TrimSpace(roomsTitle) == "" {
-		return Domain{}, businesses.ErrRoomsTitleResource
+func (cu *roomsUsecase) GetAll(ctx context.Context) ([]Domain, error) {
+	resp, err := cu.roomsRespository.Find(ctx, "")
+	if err != nil {
+		return []Domain{}, err
 	}
-	res, err := nu.roomsRepository.GetByTitle(ctx, roomsTitle)
+	return resp, nil
+}
+
+func (cu *roomsUsecase) GetByID(ctx context.Context, id int) (Domain, error) {
+	if id <= 0 {
+		return Domain{}, businesses.ErrIDNotFound
+	}
+
+	resp, err := cu.roomsRespository.FindByID(id)
 	if err != nil {
 		return Domain{}, err
 	}
-
-	return res, nil
+	return resp, nil
 }
-func (nu *roomsUsecase) Store(ctx context.Context, ip string, roomsDomain *Domain) error {
-	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
-	defer cancel()
 
-	return nil
+func (cu *roomsUsecase) GetByActive(ctx context.Context, active bool) ([]Domain, error) {
+	findActive := "false"
+	if active {
+		findActive = "true"
+	}
+	resp, err := cu.roomsRespository.Find(ctx, findActive)
+	if err != nil {
+		return []Domain{}, err
+	}
+
+	return resp, nil
 }

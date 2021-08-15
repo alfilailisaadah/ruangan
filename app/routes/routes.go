@@ -1,7 +1,8 @@
 package routes
 
 import (
-	"rentRoom/controllers/category"
+	"rentRoom/controllers/buildings"
+	"rentRoom/controllers/rents"
 	"rentRoom/controllers/rooms"
 	"rentRoom/controllers/users"
 
@@ -12,8 +13,9 @@ import (
 type ControllerList struct {
 	JWTMiddleware      middleware.JWTConfig
 	UserController     users.UserController
-	RoomsController     rooms.RoomsController
-	CategoryController category.CategoryController
+	BuildingsController     buildings.BuildingsController
+	RoomsController rooms.RoomsController
+	RentsController rents.RentsController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -21,9 +23,14 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	users.POST("/register", cl.UserController.Store)
 	users.GET("/token", cl.UserController.CreateToken)
 
-	category := e.Group("category")
-	category.GET("/list", cl.CategoryController.GetAll, middleware.JWTWithConfig(cl.JWTMiddleware))
+	rooms := e.Group("rooms")
+	rooms.GET("/list", cl.RoomsController.GetAll, middleware.JWTWithConfig(cl.JWTMiddleware))
+	rooms.POST("/store", cl.RoomsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
 
-	news := e.Group("rooms")
-	news.POST("/store", cl.RoomsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
+	buildings := e.Group("buildings")
+	buildings.POST("/store", cl.BuildingsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
+
+	
+	rents := e.Group("rents")
+	rents.POST("/store", cl.RentsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
 }

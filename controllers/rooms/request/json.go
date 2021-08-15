@@ -3,13 +3,17 @@ package request
 import "rentRoom/businesses/rooms"
 
 type Rooms struct {
-	StatusPinjam    string `json:"statusPinjam"`
-	HargaPinjam int    `json:"hargaPinjam"`
+	RoomName    string	`json:"rooms_name"`
+	RentStatus    bool	`json:"rent_status"`
+	RentPrice   	int		`json:"rent_price"`
+	BuildingId   	int		`json:"building_id"`
 }
 
 func (req *Rooms) ToDomain() *rooms.Domain {
 	return &rooms.Domain{
-		StatusPinjam:    req.StatusPinjam,
-		HargaPinjam: req.HargaPinjam,
+		RoomName:   req.RoomName,
+		RentStatus:   req.RentStatus,
+		RentPrice: 		req.RentPrice,
+		BuildingId: req.BuildingId,
 	}
 }

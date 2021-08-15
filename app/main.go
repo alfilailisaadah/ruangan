@@ -1,17 +1,23 @@
 package main
 
 import (
-	_categoryUsecase "rentRoom/businesses/category"
-	_categoryController "rentRoom/controllers/category"
-	_categoryRepo "rentRoom/drivers/databases/category"
+	_buildingsUsecase "rentRoom/businesses/buildings"
+	_buildingsController "rentRoom/controllers/buildings"
+	_buildingsRepo "rentRoom/drivers/databases/buildings"
+
+	_roomsUsecase "rentRoom/businesses/rooms"
+	_roomsController "rentRoom/controllers/rooms"
+	_roomsRepo "rentRoom/drivers/databases/rooms"
+
+	_rentsUsecase "rentRoom/businesses/rents"
+	_rentsController "rentRoom/controllers/rents"
+	_rentsRepo "rentRoom/drivers/databases/rents"
 
 	_userUsecase "rentRoom/businesses/users"
 	_userController "rentRoom/controllers/users"
 	_userRepo "rentRoom/drivers/databases/users"
 
 	_dbDriver "rentRoom/drivers/mysql"
-
-	// _ipLocatorDriver "rentRoom/drivers/thirdparties/iplocator"
 
 	_middleware "rentRoom/app/middleware"
 	_routes "rentRoom/app/routes"
@@ -21,6 +27,7 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -35,6 +42,15 @@ func init() {
 	}
 }
 
+func dbMigrate(db *gorm.DB) {
+	db.AutoMigrate(
+		&_buildingsRepo.Buildings{},
+		&_roomsRepo.Rooms{},
+		&_userRepo.Users{},
+		&_rentsRepo.Rents{},
+	)
+}
+
 func main() {
 	configDB := _dbDriver.ConfigDB{
 		DB_Username: viper.GetString(`database.user`),
@@ -44,6 +60,7 @@ func main() {
 		DB_Database: viper.GetString(`database.name`),
 	}
 	db := configDB.InitialDB()
+	dbMigrate(db)
 
 	configJWT := _middleware.ConfigJWT{
 		SecretJWT:       viper.GetString(`jwt.secret`),
@@ -54,15 +71,17 @@ func main() {
 
 	e := echo.New()
 
-	// iplocatorRepo := _ipLocatorDriver.NewIPLocator()
+	roomsRepo := _roomsRepo.NewRoomsRepository(db)
+	roomsUsecase := _roomsUsecase.NewRoomsUsecase(timeoutContext, roomsRepo)
+	roomsCtrl := _roomsController.NewRoomsController(roomsUsecase)
 
-	categoryRepo := _categoryRepo.NewCategoryRepository(db)
-	categoryUsecase := _categoryUsecase.NewCategoryUsecase(timeoutContext, categoryRepo)
-	categoryCtrl := _categoryController.NewCategoryController(categoryUsecase)
+	rentsRepo := _rentsRepo.NewRentsRepository(db)
+	rentsUsecase := _rentsUsecase.NewRentsUsecase(rentsRepo, roomsUsecase, timeoutContext)
+	rentsCtrl := _rentsController.NewRentsController(rentsUsecase)
 
-	// newsRepo := _newsRepo.NewMySQLNewsRepository(db)
-	// newsUsecase := _newsUsecase.NewNewsUsecase(newsRepo, categoryUsecase, timeoutContext, iplocatorRepo)
-	// newsCtrl := _newsController.NewNewsController(newsUsecase)
+	buildingsRepo := _buildingsRepo.NewMySQLBuidingsRepository(db)
+	buildingsUsecase := _buildingsUsecase.NewBuildingsUsecase(buildingsRepo, roomsUsecase, timeoutContext)
+	buildingsCtrl := _buildingsController.NewBuildingsController(buildingsUsecase)
 
 	userRepo := _userRepo.NewMySQLUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT, timeoutContext)
@@ -71,8 +90,9 @@ func main() {
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:      configJWT.Init(),
 		UserController:     *userCtrl,
-		// NewsController:     *newsCtrl,
-		CategoryController: *categoryCtrl,
+		BuildingsController:     *buildingsCtrl,
+		RentsController:     *rentsCtrl,
+		RoomsController: *roomsCtrl,
 	}
 	routesInit.RouteRegister(e)
 
