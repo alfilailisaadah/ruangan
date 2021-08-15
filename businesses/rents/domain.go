@@ -8,7 +8,7 @@ import (
 type Domain struct {
 	ID           	int
 	UserId   int
-	RoomsId    int
+	RoomId    int
 	JumlahBayar    int
 	TanggalPinjam	string
 	CreatedAt   	time.Time

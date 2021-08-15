@@ -29,6 +29,10 @@ func (nr *rentsRepository) Store(ctx context.Context, rentsDomain *rents.Domain)
 	if err != nil {
 		return rents.Domain{}, result.Error
 	}
+	errr := nr.conn.Preload("Room").First(&rec, rec.ID).Error
+	if errr != nil {
+		return rents.Domain{}, result.Error
+	}
 	return rec.ToDomain(), nil
 }
 

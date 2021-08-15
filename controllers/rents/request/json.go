@@ -6,6 +6,8 @@ import (
 
 
 type Rents struct {
+	UserId    int	`json:"user_id"`
+	RoomId    int	`json:"room_id"`
 	JumlahBayar    int	`json:"jumlah_bayar"`
 	TanggalPinjam    string	`json:"tanggal_pinjam"`
 }
@@ -13,6 +15,8 @@ type Rents struct {
 func (req *Rents) ToDomain() *rents.Domain {
 	return &rents.Domain{
 		JumlahBayar:   req.JumlahBayar,
+		UserId:   req.UserId,
+		RoomId:   req.RoomId,
 		TanggalPinjam:   req.TanggalPinjam,
 	}
 }
