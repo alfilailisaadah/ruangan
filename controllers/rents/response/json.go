@@ -6,7 +6,7 @@ import (
 )
 
 type Rents struct {
-	Id          int       `json:"id"`
+	ID          int       `json:"id"`
 	UserId    int	  `json:"user_id"`
 	RoomId 	int	  `json:"room_id"`
 	JumlahBayar   int       `json:"jumlah_pinjam"`
@@ -18,7 +18,7 @@ type Rents struct {
 
 func FromDomain(domain rents.Domain) Rents {
 	return Rents{
-		Id:          	domain.ID,
+		ID:          	domain.ID,
 		UserId:       domain.UserId,
 		RoomId: 	domain.RoomId,
 		JumlahBayar:      domain.JumlahBayar,

@@ -1,15 +1,12 @@
 package rents
 
 import (
-	"errors"
 	"net/http"
 	"rentRoom/businesses"
 	"rentRoom/businesses/rents"
 	controller "rentRoom/controllers"
 	"rentRoom/controllers/rents/request"
 	"rentRoom/controllers/rents/response"
-	"strconv"
-	"strings"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -59,19 +56,12 @@ func (ctrl *RentsController) GetAll(c echo.Context) error {
 func (ctrl *RentsController) Update(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	id := c.QueryParam("id")
-	if strings.TrimSpace(id) == "" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("missing required id"))
-	}
-
 	req := request.Rents{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	domainReq := req.ToDomain()
-	idInt, _ := strconv.Atoi(id)
-	domainReq.ID = idInt
 	resp, err := ctrl.rentsUseCase.Update(ctx, domainReq)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)

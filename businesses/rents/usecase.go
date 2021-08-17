@@ -78,13 +78,16 @@ func (nu *rentsUsecase) Fetch(ctx context.Context, page, perpage int) ([]Domain,
 }
 
 func (nu *rentsUsecase) Update(ctx context.Context, rentsDomain *Domain) (*Domain, error) {
-	existedRents, err := nu.rentsRepository.GetByRentId(ctx, rentsDomain.ID)
+	_, err := nu.rentsRepository.GetByRentId(ctx, rentsDomain.ID)
 	if err != nil {
 		if !strings.Contains(err.Error(),"not found"){
 			return &Domain{}, err
 		}
 	}
-	rentsDomain.ID = existedRents.ID
+	// if existedRents != (Domain{}){
+	// 	return &Domain{}, businesses.ErrDuplicateData
+	// }
+	// rentsDomain.ID = existedRents.ID
 	// fmt.Println(rentsDomain)
 	result, err := nu.rentsRepository.Update(ctx, rentsDomain)
 	if err != nil {
