@@ -16,6 +16,7 @@ type Domain struct {
 }
 
 type Usecase interface {
+	Login(ctx context.Context, data *Domain) (Domain, string, error)
 	CreateToken(ctx context.Context, username, password string) (string, error)
 	Store(ctx context.Context, data *Domain) error
 }

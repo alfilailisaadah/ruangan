@@ -22,6 +22,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("/register", cl.UserController.Store)
 	users.GET("/token", cl.UserController.CreateToken)
+	users.POST("/login", cl.UserController.Login)
 
 	rooms := e.Group("rooms")
 	rooms.GET("/list", cl.RoomsController.GetAll, middleware.JWTWithConfig(cl.JWTMiddleware))
