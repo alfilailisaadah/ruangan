@@ -18,7 +18,7 @@ type Usecase interface {
 	GetByID(ctx context.Context, buildingsId int) (Domain, error)
 	GetByTitle(ctx context.Context, buildingsTitle string) (Domain, error)
 	Store(ctx context.Context, ip string, buildingsDomain *Domain) (Domain, error)
-	Update(ctx context.Context, buildingsDomain *Domain) (*Domain, error)
+	GetAll(ctx context.Context) ([]Domain, error)
 }
 
 type Repository interface {
@@ -26,5 +26,5 @@ type Repository interface {
 	GetByID(ctx context.Context, buildingsId int) (Domain, error)
 	GetByTitle(ctx context.Context, buildingsTitle string) (Domain, error)
 	Store(ctx context.Context, buildingsDomain *Domain) (Domain, error)
-	Update(ctx context.Context, buildingsDomain *Domain) (Domain, error)
+	Find(ctx context.Context, rentStatus string) ([]Domain, error)
 }
