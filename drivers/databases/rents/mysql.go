@@ -2,6 +2,7 @@ package rents
 
 import (
 	"context"
+	"fmt"
 	"rentRoom/businesses/rents"
 
 	"gorm.io/gorm"
@@ -15,9 +16,6 @@ func NewRentsRepository(conn *gorm.DB) rents.Repository {
 	return &rentsRepository{
 		conn: conn,
 	}
-}
-type usersRepository struct {
-	conn *gorm.DB
 }
 
 func (nr *rentsRepository) Store(ctx context.Context, rentsDomain *rents.Domain) (rents.Domain, error) {
@@ -42,6 +40,15 @@ func (nr *rentsRepository) Store(ctx context.Context, rentsDomain *rents.Domain)
 func (nr *rentsRepository) GetById(ctx context.Context,userId int) (rents.Domain, error) {
 	rec := Rents{}
 	err := nr.conn.Where("user_id = ?", userId).First(&rec).Error
+	if err != nil {
+		return rents.Domain{}, err
+	}
+	return rec.ToDomain(), nil
+}
+
+func (nr *rentsRepository) GetByRentId(ctx context.Context,rentId int) (rents.Domain, error) {
+	rec := Rents{}
+	err := nr.conn.Where("id = ?", rentId).First(&rec).Error
 	if err != nil {
 		return rents.Domain{}, err
 	}
@@ -100,4 +107,22 @@ func (cr *rentsRepository) Find(ctx context.Context, rentStatus string) ([]rents
 
 	return categoryDomain, nil
 }
+
+func (nr *rentsRepository) Update(ctx context.Context, rentsDomain *rents.Domain) (rents.Domain, error) {
+	rec := fromDomain(rentsDomain)
+	fmt.Println(rec)
+	result := nr.conn.Updates(&rec)
+	if result.Error != nil {
+		return rents.Domain{}, result.Error
+	}
+
+	err := nr.conn.Preload("Rents").First(&rec,rec.ID).Error
+	if err != nil {
+		return rents.Domain{}, result.Error
+	}
+
+
+	return rec.ToDomain(), nil
+}
+
 

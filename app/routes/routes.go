@@ -34,4 +34,5 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	rents := e.Group("rents")
 	rents.POST("/store", cl.RentsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
 	rents.GET("/list", cl.RentsController.GetAll, middleware.JWTWithConfig(cl.JWTMiddleware))
+	rents.PUT("/update", cl.RentsController.Update, middleware.JWTWithConfig(cl.JWTMiddleware))
 }

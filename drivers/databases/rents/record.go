@@ -13,6 +13,7 @@ type Rents struct {
 	RoomId       	int
 	JumlahBayar      	int
 	TanggalPinjam	string
+	StatusPinjam	bool
 	User	users.Users
 	Room	rooms.Rooms
 	CreatedAt   time.Time
@@ -25,6 +26,7 @@ func fromDomain(domain *rents.Domain) *Rents {
 		RoomId:       domain.RoomId,
 		JumlahBayar:      domain.JumlahBayar,
 		TanggalPinjam: 	domain.TanggalPinjam,
+		StatusPinjam: domain.StatusPinjam,
 	}
 }
 
@@ -35,6 +37,7 @@ func (rec *Rents) ToDomain() rents.Domain {
 		RoomId:       rec.RoomId,
 		JumlahBayar:      rec.JumlahBayar,
 		TanggalPinjam:      rec.TanggalPinjam,
+		StatusPinjam: rec.StatusPinjam,
 		CreatedAt: 		rec.CreatedAt,
 		UpdatedAt: 		rec.UpdatedAt,
 	}

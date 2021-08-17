@@ -11,6 +11,7 @@ type Rents struct {
 	RoomId 	int	  `json:"room_id"`
 	JumlahBayar   int       `json:"jumlah_pinjam"`
 	TanggalPinjam   	string		`json:"tanggal_pinjam"`
+	StatusPinjam   	bool		`json:"status_pinjam"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
@@ -22,6 +23,7 @@ func FromDomain(domain rents.Domain) Rents {
 		RoomId: 	domain.RoomId,
 		JumlahBayar:      domain.JumlahBayar,
 		TanggalPinjam: 	domain.TanggalPinjam,
+		StatusPinjam: 	domain.StatusPinjam,
 		CreatedAt:   	domain.CreatedAt,
 		UpdatedAt:   	domain.UpdatedAt,
 	}
