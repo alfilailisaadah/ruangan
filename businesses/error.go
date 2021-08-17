@@ -17,5 +17,8 @@ var (
 
 	ErrDuplicateData = errors.New("duplicate data")
 
+	ErrUsernameorPassword = errors.New("Username or Password not found")
+	ErrInvalidCredential = errors.New("invalid credential")
+
 	ErrUsernamePasswordNotFound = errors.New("(Username) or (Password) empty")
 )
