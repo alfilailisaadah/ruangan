@@ -18,4 +18,6 @@ var (
 	ErrDuplicateData = errors.New("duplicate data")
 
 	ErrUsernamePasswordNotFound = errors.New("(Username) or (Password) empty")
+	
+	ErrUserIdorRoomIdNotFound = errors.New("(User Id) or (Room Id) Not Found")
 )

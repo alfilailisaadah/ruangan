@@ -28,8 +28,12 @@ func (nr *rentsRepository) Store(ctx context.Context, rentsDomain *rents.Domain)
 		return rents.Domain{}, result.Error
 	}
 
-	err := nr.conn.Preload("User","Room").First(&rec, rec.ID).Error
+	err := nr.conn.Preload("User").First(&rec, rec.ID).Error
 	if err != nil {
+		return rents.Domain{}, result.Error
+	}
+	errr := nr.conn.Preload("Room").First(&rec, rec.ID).Error
+	if errr != nil {
 		return rents.Domain{}, result.Error
 	}
 	return rec.ToDomain(), nil
@@ -38,6 +42,15 @@ func (nr *rentsRepository) Store(ctx context.Context, rentsDomain *rents.Domain)
 func (nr *rentsRepository) GetById(ctx context.Context,userId int) (rents.Domain, error) {
 	rec := Rents{}
 	err := nr.conn.Where("user_id = ?", userId).First(&rec).Error
+	if err != nil {
+		return rents.Domain{}, err
+	}
+	return rec.ToDomain(), nil
+}
+
+func (nr *rentsRepository) GetRoomById(ctx context.Context,roomId int) (rents.Domain, error) {
+	rec := Rents{}
+	err := nr.conn.Where("room_id = ?", roomId).First(&rec).Error
 	if err != nil {
 		return rents.Domain{}, err
 	}

@@ -2,6 +2,7 @@ package rents
 
 import (
 	"net/http"
+	"rentRoom/businesses"
 	"rentRoom/businesses/rents"
 	controller "rentRoom/controllers"
 	"rentRoom/controllers/rents/request"
@@ -30,7 +31,7 @@ func (ctrl *RentsController) Store(c echo.Context) error {
 
 	resp, err := ctrl.rentsUseCase.Store(ctx, req.ToDomain())
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, businesses.ErrUserIdorRoomIdNotFound)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))

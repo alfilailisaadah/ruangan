@@ -2,6 +2,7 @@ package rents
 
 import (
 	"context"
+	"rentRoom/businesses"
 	"rentRoom/businesses/rooms"
 	"strings"
 	"time"
@@ -29,7 +30,14 @@ func (nu *rentsUsecase) Store(ctx context.Context, rentsDomain *Domain) (Domain,
 	_, err := nu.rentsRepository.GetById(ctx, rentsDomain.UserId)
 	if err != nil {
 		if !strings.Contains(err.Error(), "not found") {
-			return Domain{},err
+			return Domain{},businesses.ErrUserIdorRoomIdNotFound
+		}
+	}
+
+	_, errr := nu.rentsRepository.GetRoomById(ctx, rentsDomain.RoomId)
+	if errr != nil {
+		if !strings.Contains(err.Error(), "not found") {
+			return Domain{},businesses.ErrUserIdorRoomIdNotFound
 		}
 	}
 
