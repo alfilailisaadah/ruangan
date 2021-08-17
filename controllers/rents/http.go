@@ -23,17 +23,31 @@ func NewRentsController(rentsUC rents.Usecase) *RentsController {
 func (ctrl *RentsController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	ip := c.QueryParam("ip")
-
 	req := request.Rents{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	resp, err := ctrl.rentsUseCase.Store(ctx, ip, req.ToDomain())
+	resp, err := ctrl.rentsUseCase.Store(ctx, req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
+}
+
+func (ctrl *RentsController) GetAll(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	resp, err := ctrl.rentsUseCase.GetAll(ctx)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	responseController := []response.Rents{}
+	for _, value := range resp {
+		responseController = append(responseController, response.FromDomain(value))
+	}
+
+	return controller.NewSuccessResponse(c, responseController)
 }

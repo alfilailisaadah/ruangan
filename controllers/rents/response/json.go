@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Rooms struct {
+type Rents struct {
 	Id          int       `json:"id"`
 	UserId    int	  `json:"user_id"`
 	RoomId 	int	  `json:"room_id"`
@@ -15,8 +15,8 @@ type Rooms struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func FromDomain(domain rents.Domain) Rooms {
-	return Rooms{
+func FromDomain(domain rents.Domain) Rents {
+	return Rents{
 		Id:          	domain.ID,
 		UserId:       domain.UserId,
 		RoomId: 	domain.RoomId,
