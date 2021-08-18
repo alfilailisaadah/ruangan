@@ -40,7 +40,7 @@ func (uc *userUsecase) CreateToken(ctx context.Context, username, password strin
 		return "", businesses.ErrInternalServer
 	}
 
-	token := uc.jwtAuth.GenerateToken(userDomain.Id)
+	token := uc.jwtAuth.GenerateToken(userDomain.Id, userDomain.UserType)
 	return token, nil
 }
 
@@ -88,6 +88,6 @@ func (uc *userUsecase) Login(ctx context.Context, userDomain *Domain) (Domain, s
 		return Domain{}, "", businesses.ErrInvalidCredential
 	}
 
-	token := uc.jwtAuth.GenerateToken(user.Id)
+	token := uc.jwtAuth.GenerateToken(user.Id, user.UserType)
 	return user, token, nil
 }

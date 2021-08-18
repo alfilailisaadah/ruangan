@@ -1,7 +1,9 @@
 package rents
 
 import (
+	"errors"
 	"net/http"
+	"rentRoom/app/middleware"
 	"rentRoom/businesses"
 	"rentRoom/businesses/rents"
 	controller "rentRoom/controllers"
@@ -23,7 +25,10 @@ func NewRentsController(rentsUC rents.Usecase) *RentsController {
 
 func (ctrl *RentsController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
-
+	user := middleware.GetUser(c)
+	if user.UserType == "1" {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid role"))
+	}
 	req := request.Rents{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -55,7 +60,10 @@ func (ctrl *RentsController) GetAll(c echo.Context) error {
 
 func (ctrl *RentsController) Update(c echo.Context) error {
 	ctx := c.Request().Context()
-
+	user := middleware.GetUser(c)
+	if user.UserType == "2" {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid role"))
+	}
 	req := request.Rents{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
