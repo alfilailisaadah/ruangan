@@ -22,6 +22,7 @@ type Rents struct {
 
 func fromDomain(domain *rents.Domain) *Rents {
 	return &Rents{
+		ID: domain.ID,
 		UserId:       domain.UserId,
 		RoomId:       domain.RoomId,
 		JumlahBayar:      domain.JumlahBayar,

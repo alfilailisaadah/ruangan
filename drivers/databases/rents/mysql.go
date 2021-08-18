@@ -100,12 +100,12 @@ func (cr *rentsRepository) Find(ctx context.Context, rentStatus string) ([]rents
 		return []rents.Domain{}, err
 	}
 
-	categoryDomain := []rents.Domain{}
+	rentsDomain := []rents.Domain{}
 	for _, value := range rec {
-		categoryDomain = append(categoryDomain, value.ToDomain())
+		rentsDomain = append(rentsDomain, value.ToDomain())
 	}
 
-	return categoryDomain, nil
+	return rentsDomain, nil
 }
 
 func (nr *rentsRepository) Update(ctx context.Context, rentsDomain *rents.Domain) (rents.Domain, error) {
@@ -116,7 +116,7 @@ func (nr *rentsRepository) Update(ctx context.Context, rentsDomain *rents.Domain
 		return rents.Domain{}, result.Error
 	}
 
-	err := nr.conn.Preload("Rents").First(&rec,rec.ID).Error
+	err := nr.conn.Preload("User").Preload("Room").First(&rec, rec.ID).Error
 	if err != nil {
 		return rents.Domain{}, result.Error
 	}
