@@ -111,7 +111,7 @@ func (cr *rentsRepository) Find(ctx context.Context, rentStatus string) ([]rents
 func (nr *rentsRepository) Update(ctx context.Context, rentsDomain *rents.Domain) (rents.Domain, error) {
 	rec := fromDomain(rentsDomain)
 	fmt.Println(rec)
-	result := nr.conn.Updates(&rec)
+	result := nr.conn.Select("status_pinjam").Updates(&rec)
 	if result.Error != nil {
 		return rents.Domain{}, result.Error
 	}
