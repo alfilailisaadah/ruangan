@@ -1,402 +1,486 @@
----
 swagger: "2.0"
 info:
-  description: this is the documentation off room rental app
+  description: This is a Rent Room API
   version: 1.0.0
-  title: Swagger Petstore
-  termsOfService: http://swagger.io/terms/
+  title: Rent Room App API
+  # put the contact info for your development or API team
   contact:
-    email: alfilailisaadahr@gmail.com
+    email: alfilailisaad@gmail.com
+
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: petstore.swagger.io
-basePath: /v2
+
+# tags are used for organizing operations
 tags:
-- name: rooms
-  description: Everything about room
-  externalDocs:
-    description: Find out more
-    url: http://swagger.io
-- name: user
-  description: user devide into two admin and borrower
-schemes:
-- http
+  - name: users
+  - name: rooms
+  - name: buildings
+  - name: rents
+
 paths:
-  /rooms:
+  /users/login:
     post:
       tags:
-      - rooms
-      summary: Add a new room into building
-      operationId: addRoom
-      consumes:
-      - application/json
-      - application/xml
+        - users
       produces:
-      - application/json
-      - application/xml
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: Room object that needs to be added to the store
-        required: true
-        schema:
-          $ref: '#/definitions/Room'
+        - in: body
+          name: login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
       responses:
-        "405":
-          description: Invalid input
-    put:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  username:
+                    type: string
+                  user_type:
+                    type: string
+                  role:
+                    type: string
+                  token:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+        400:
+          description: bad input parameter
+  /users/register:
+    post:
       tags:
-      - rooms
-      summary: Update an existing room
-      operationId: updatePet
-      consumes:
-      - application/json
-      - application/xml
+        - users
       produces:
-      - application/json
-      - application/xml
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: Room object that needs to be added to the building
-        required: true
-        schema:
-          $ref: '#/definitions/Room'
+        - in: body
+          name: login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+              name:
+                type: string
+              user_type:
+                type: string
       responses:
-        "400":
-          description: Invalid ID building
-        "404":
-          description: Room not found
-        "405":
-          description: Validation exception
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-  /rooms/findById:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                $ref: "#/definitions/User"
+        400:
+          description: bad input parameter
+
+  /rooms/list:
     get:
       tags:
-      - rooms
-      summary: Finds Room by id
-      description: showing room with matches id
-      operationId: findRoomsById
+        - rooms
+      consumes:
+        - application/json
       produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: status
-        in: query
-        description: Status values that need to be considered for filter
-        required: true
-        type: array
-        items:
-          type: string
-          default: available
-          enum:
-          - available
-          - pending
-          - sold
-        collectionFormat: multi
+        - application/json
       responses:
-        "200":
-          description: successful operation
+        200:
+          description: success add response
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                $ref: "#/definitions/Rooms"
+        400:
+          description: bad input parameter
+  /rooms/store:
+    post:
+      tags:
+        - rooms
+      produces:
+        - application/json
+
+      parameters:
+        - in: body
+          name: rooms
+          schema:
+            type: object
+            properties:
+              rooms_name:
+                type: string
+              rent_status:
+                type: boolean
+              rent_price:
+                type: integer
+              buildin_id:
+                type: integer
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Rooms"
+        400:
+          description: bad input parameter
+  /rooms/update:
+    put:
+      tags:
+        - rooms
+      produces:
+        - application/json
+
+      parameters:
+        - in: body
+          name: rooms
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              rent_status:
+                type: boolean
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Rooms"
+        400:
+          description: bad input parameter
+  /buildings/store:
+    post:
+      tags:
+        - buildings
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          schema:
+            type: object
+            properties:
+              building_name:
+                type: string
+              building_addr:
+                type: string
+      responses:
+        200:
+          description: success add response
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                $ref: "#/definitions/Building"
+        400:
+          description: bad input parameter
+  /buildings/list:
+    get:
+      tags:
+        - buildings
+      produces:
+        - application/json
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Building"
+        400:
+          description: bad input parameter
+
+  /rents/store:
+    post:
+      tags:
+        - rents
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
           schema:
             type: array
             items:
-              $ref: '#/definitions/Room'
-        "400":
-          description: Invalid status value
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-  /rooms/{roomId}:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                room_id:
+                  type: string
+                jumlah_bayar:
+                  type: integer
+                tanggal_pinjam:
+                  type: string
+                status_pinjam:
+                  type: boolean
+      responses:
+        200:
+          description: success add response
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                $ref: "#/definitions/Rents"
+        400:
+          description: bad input parameter
+  /rents/list:
     get:
       tags:
-      - rooms
-      summary: Find room by ID
-      description: Returns a single room
-      operationId: getRoomById
+        - rents
       produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: roomId
-        in: path
-        description: ID of room to return
-        required: true
-        type: integer
-        format: int64
+        - application/json
       responses:
-        "200":
-          description: successful operation
+        200:
+          description: search results matching criteria
           schema:
-            $ref: '#/definitions/Room'
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Room not found
-      security:
-      - api_key: []
-    post:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Rents"
+        400:
+          description: bad input parameter
+
+  /rents/update:
+    put:
       tags:
-      - rooms
-      summary: Updates a room in the store with form data
-      operationId: updateRoomWithForm
-      consumes:
-      - application/x-www-form-urlencoded
+        - rents
       produces:
-      - application/json
-      - application/xml
+        - application/json
+
       parameters:
-      - name: roomId
-        in: path
-        description: ID of pet that needs to be updated
-        required: true
-        type: integer
-        format: int64
-      - name: name
-        in: formData
-        description: Updated name of the room
-        required: false
-        type: string
-      - name: status
-        in: formData
-        description: Updated status of the room
-        required: false
-        type: string
-      responses:
-        "405":
-          description: Invalid input
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-    delete:
-      tags:
-      - rooms
-      summary: Deletes a room
-      operationId: deleteRoom
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: api_key
-        in: header
-        required: false
-        type: string
-      - name: roomId
-        in: path
-        description: Room id to delete
-        required: true
-        type: integer
-        format: int64
-      responses:
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Room not found
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-  /rooms/{roomId}/uploadImage:
-    post:
-      tags:
-      - rooms
-      summary: uploads an image
-      operationId: uploadFile
-      consumes:
-      - multipart/form-data
-      produces:
-      - application/json
-      parameters:
-      - name: roomId
-        in: path
-        description: ID of room to update
-        required: true
-        type: integer
-        format: int64
-      - name: additionalMetadata
-        in: formData
-        description: Additional data to pass to server
-        required: false
-        type: string
-      - name: file
-        in: formData
-        description: file to upload
-        required: false
-        type: file
-      responses:
-        "200":
-          description: successful operation
+        - in: body
+          name: rooms
           schema:
-            $ref: '#/definitions/ApiResponse'
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-  /user:
-    post:
-      tags:
-      - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - in: body
-        name: body
-        description: Created user object
-        required: true
-        schema:
-          $ref: '#/definitions/User'
+            type: object
+            properties:
+              id:
+                type: integer
+              status_pinjam:
+                type: boolean
       responses:
-        default:
-          description: successful operation
-  /user/login:
-    get:
-      tags:
-      - user
-      summary: Logs user into the system
-      operationId: loginUser
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: username
-        in: query
-        description: The user name for login
-        required: true
-        type: string
-      - name: password
-        in: query
-        description: The password for login in clear text
-        required: true
-        type: string
-      responses:
-        "200":
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              type: integer
-              format: int32
-              description: calls per hour allowed by the user
-            X-Expires-After:
-              type: string
-              format: date-time
-              description: date in UTC when token expires
+        200:
+          description: search results matching criteria
           schema:
-            type: string
-        "400":
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-      - user
-      summary: Logs out current logged in user session
-      operationId: logoutUser
-      produces:
-      - application/json
-      - application/xml
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    delete:
-      tags:
-      - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: username
-        in: path
-        description: The name that needs to be deleted
-        required: true
-        type: string
-      responses:
-        "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
-securityDefinitions:
-  petstore_auth:
-    type: oauth2
-    authorizationUrl: http://petstore.swagger.io/oauth/dialog
-    flow: implicit
-    scopes:
-      write:pets: modify pets in your account
-      read:pets: read your pets
-  api_key:
-    type: apiKey
-    name: api_key
-    in: header
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  rc:
+                    type: integer
+                  message:
+                    type: string
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Rents"
+        400:
+          description: bad input parameter
+
 definitions:
   User:
     type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: string
-        format: int32
-        description: User Status
-    xml:
-      name: User
-  Room:
-    type: object
     required:
-    - name
+      - name
+      - username
+      - user_type
+      - role
+      - token
+      - created_at
+      - updated_at
     properties:
       id:
         type: integer
         format: int64
-      price:
-        type: integer
-        format: int64
+        example: 1
       name:
         type: string
-        example: uranus
-      status:
+        example: alfi
+      username:
         type: string
-        description: room status in the building
-        enum:
-        - available
-        - pending
-        - sold
-    xml:
-      name: Pet
-  ApiResponse:
+        example: alfilaili
+      user_type:
+        type: string
+        example: 1
+      token:
+        type: string
+        example: rtyuijksdbcvshsdghgshdgshgdsjgjh
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+  Building:
     type: object
     properties:
-      code:
+      id:
         type: integer
-        format: int32
-      type:
+        format: int64
+        example: 1
+      building_name:
         type: string
-      message:
+        example: uranus
+      building_addr:
         type: string
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+        example: jln. in aja
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+  Rooms:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      room_name:
+        type: string
+        example: uranus
+      rent_status:
+        type: boolean
+        example: true
+      room_price:
+        type: integer
+        example: 10000
+      building_id:
+        type: integer
+        example: 1
+      building_name:
+        type: string
+        example: uranus
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+
+  Rents:
+    type: object
+    properties:
+      id:
+        type: integer
+      room_id:
+        type: integer
+      jumlah_pinjam:
+        type: integer
+      tanggal_pinjam:
+        type: string
+      status_pinjam:
+        type: boolean
+
+  # Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+# basePath: /khoiruttamimi/shoe-store/1.0.0
+schemes:
+  - https
+# Added by API Auto Mocking Plugin
+basePath: /alfilailisaadahr/rentRoom/1.0.0
