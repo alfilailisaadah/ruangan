@@ -65,11 +65,6 @@ func (nr *mysqlBuildingsRepository) Store(ctx context.Context, buildingsDomain *
 		return buildings.Domain{}, result.Error
 	}
 
-	err := nr.Conn.Preload("Room").First(&rec, rec.Id).Error
-	if err != nil {
-		return buildings.Domain{}, result.Error
-	}
-
 	return rec.toDomain(), nil
 }
 
