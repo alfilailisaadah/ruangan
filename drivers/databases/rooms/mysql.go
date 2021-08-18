@@ -58,3 +58,26 @@ func (cr *roomsRepository) FindByID(id int) (rooms.Domain, error) {
 	}
 	return rec.ToDomain(), nil
 }
+
+func (nr *roomsRepository) GetByRoomsId(ctx context.Context,roomId int) (rooms.Domain, error) {
+	rec := Rooms{}
+	err := nr.conn.Where("id = ?", roomId).First(&rec).Error
+	if err != nil {
+		return rooms.Domain{}, err
+	}
+	return rec.ToDomain(), nil
+}
+
+func (nr *roomsRepository) Update(ctx context.Context, roomsDomain *rooms.Domain) (rooms.Domain, error) {
+	rec := fromDomain(roomsDomain)
+	result := nr.conn.Select("rent_status").Updates(&rec)
+	if result.Error != nil {
+		return rooms.Domain{}, result.Error
+	}
+
+	err := nr.conn.Preload("Building").First(&rec, rec.ID).Error
+	if err != nil {
+		return rooms.Domain{}, result.Error
+	}
+	return rec.ToDomain(), nil
+}

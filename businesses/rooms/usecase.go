@@ -3,6 +3,7 @@ package rooms
 import (
 	"context"
 	"rentRoom/businesses"
+	"strings"
 	"time"
 )
 
@@ -60,4 +61,23 @@ func (cu *roomsUsecase) GetByActive(ctx context.Context, active bool) ([]Domain,
 	}
 
 	return resp, nil
+}
+
+func (nu *roomsUsecase) Update(ctx context.Context, roomsDomain *Domain) (*Domain, error) {
+	_, err := nu.roomsRespository.GetByRoomsId(ctx, roomsDomain.ID)
+	if err != nil {
+		if !strings.Contains(err.Error(),"not found"){
+			return &Domain{}, err
+		}
+	}
+	// if existedRents != (Domain{}){
+	// 	return &Domain{}, businesses.ErrDuplicateData
+	// }
+	// roomsDomain.ID = existedRents.ID
+	result, err := nu.roomsRespository.Update(ctx, roomsDomain)
+	if err != nil {
+		return &Domain{}, err
+	}
+
+	return &result, nil
 }

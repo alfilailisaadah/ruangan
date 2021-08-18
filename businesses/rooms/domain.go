@@ -21,11 +21,14 @@ type Usecase interface {
 	GetByID(ctx context.Context, id int) (Domain, error)
 	Store(ctx context.Context,roomsDomain *Domain) (Domain, error)
 	GetByActive(ctx context.Context, rentStatus bool) ([]Domain, error)
+	Update(ctx context.Context, roomsDomain *Domain) (*Domain, error)
 }
 
 type Repository interface {
 	Find(ctx context.Context, rentStatus string) ([]Domain, error)
 	Store(ctx context.Context, roomsDomain *Domain) (Domain, error)
 	FindByID(id int) (Domain, error)
+	GetByRoomsId(ctx context.Context, roomsId int) (Domain, error)
+	Update(ctx context.Context, roomsDomain *Domain) (Domain, error)
 }
 

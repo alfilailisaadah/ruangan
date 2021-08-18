@@ -12,6 +12,7 @@ type Rooms struct {
 	RentStatus 		bool
 	RentPrice      	int
 	BuildingId	int
+	BuildingName	string
 	Building 	buildings.Buildings
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -19,10 +20,12 @@ type Rooms struct {
 
 func fromDomain(domain *rooms.Domain) *Rooms {
 	return &Rooms{
+		ID 		: 		domain.ID,
 		RoomName:       domain.RoomName,
 		RentStatus: 	domain.RentStatus,
 		RentPrice:      domain.RentPrice,
 		BuildingId: 	domain.BuildingId,
+		BuildingName: 	domain.BuildingName,
 	}
 }
 
@@ -33,7 +36,7 @@ func (rec *Rooms) ToDomain() rooms.Domain {
 		RentStatus: 	rec.RentStatus,
 		RentPrice:      rec.RentPrice,
 		BuildingId:		rec.BuildingId,
-		BuildingName:	rec.Building.BuildingName,
+		BuildingName:	rec.BuildingName,
 		CreatedAt: 		rec.CreatedAt,
 		UpdatedAt: 		rec.UpdatedAt,
 	}

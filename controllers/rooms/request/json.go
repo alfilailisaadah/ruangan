@@ -3,6 +3,7 @@ package request
 import "rentRoom/businesses/rooms"
 
 type Rooms struct {
+	ID		int `json:"id"`
 	RoomName    string	`json:"rooms_name"`
 	RentStatus    bool	`json:"rent_status"`
 	RentPrice   	int		`json:"rent_price"`
@@ -11,6 +12,7 @@ type Rooms struct {
 
 func (req *Rooms) ToDomain() *rooms.Domain {
 	return &rooms.Domain{
+		ID: req.ID,
 		RoomName:   req.RoomName,
 		RentStatus:   req.RentStatus,
 		RentPrice: 		req.RentPrice,
