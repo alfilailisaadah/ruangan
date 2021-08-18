@@ -6,6 +6,7 @@ import (
 	"rentRoom/businesses/users"
 	controller "rentRoom/controllers"
 	"rentRoom/controllers/users/request"
+	"rentRoom/controllers/users/response"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -52,5 +53,22 @@ func (ctrl *UserController) CreateToken(c echo.Context) error {
 		Token string `json:"token"`
 	}{Token: token}
 
+	return controller.NewSuccessResponse(c, response)
+}
+
+func (ctrl *UserController) Login(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	req := request.UserLogin{}
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	user, token, err := ctrl.userUseCase.Login(ctx, req.ToDomain())
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	response := response.GetLoginResponse(user, token)
 	return controller.NewSuccessResponse(c, response)
 }

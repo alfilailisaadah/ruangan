@@ -70,3 +70,24 @@ func (uc *userUsecase) Store(ctx context.Context, userDomain *Domain) error {
 
 	return nil
 }
+
+func (uc *userUsecase) Login(ctx context.Context, userDomain *Domain) (Domain, string, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
+	if strings.TrimSpace(userDomain.Username) == "" || strings.TrimSpace(userDomain.Password) == "" {
+		return Domain{}, "", businesses.ErrUsernameorPassword
+	}
+
+	user, err := uc.userRepository.GetByUsername(ctx, userDomain.Username)
+	if err != nil {
+		return Domain{}, "", err
+	}
+
+	if !encrypt.ValidateHash(userDomain.Password, user.Password) {
+		return Domain{}, "", businesses.ErrInvalidCredential
+	}
+
+	token := uc.jwtAuth.GenerateToken(user.Id)
+	return user, token, nil
+}

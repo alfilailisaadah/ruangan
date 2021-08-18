@@ -73,18 +73,24 @@ func (nr *mysqlBuildingsRepository) Store(ctx context.Context, buildingsDomain *
 	return rec.toDomain(), nil
 }
 
-func (nr *mysqlBuildingsRepository) Update(ctx context.Context, buildingsDomain *buildings.Domain) (buildings.Domain, error) {
-	rec := fromDomain(buildingsDomain)
+func (cr *mysqlBuildingsRepository) Find(ctx context.Context, rentStatus string) ([]buildings.Domain, error) {
+	rec := []Buildings{}
 
-	result := nr.Conn.Save(&rec)
-	if result.Error != nil {
-		return buildings.Domain{}, result.Error
+	query := cr.Conn
+
+	if rentStatus != "" {
+		query = query.Where("rentStatus = ?", rentStatus)
 	}
 
-	err := nr.Conn.Preload("Room").First(&rec, rec.Id).Error
+	err := query.Find(&rec).Error
 	if err != nil {
-		return buildings.Domain{}, result.Error
+		return []buildings.Domain{}, err
 	}
 
-	return rec.toDomain(), nil
+	categoryDomain := []buildings.Domain{}
+	for _, value := range rec {
+		categoryDomain = append(categoryDomain, value.toDomain())
+	}
+
+	return categoryDomain, nil
 }

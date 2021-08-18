@@ -79,17 +79,11 @@ func (nu *buildingsUsecase) Store(ctx context.Context, ip string, buildingsDomai
 
 	return result, nil
 }
-func (nu *buildingsUsecase) Update(ctx context.Context, buildingsDomain *Domain) (*Domain, error) {
-	existedBuildings, err := nu.buildingsRepository.GetByID(ctx, buildingsDomain.ID)
-	if err != nil {
-		return &Domain{}, err
-	}
-	buildingsDomain.ID = existedBuildings.ID
 
-	result, err := nu.buildingsRepository.Update(ctx, buildingsDomain)
+func (cu *buildingsUsecase) GetAll(ctx context.Context) ([]Domain, error) {
+	resp, err := cu.buildingsRepository.Find(ctx, "")
 	if err != nil {
-		return &Domain{}, err
+		return []Domain{}, err
 	}
-
-	return &result, nil
+	return resp, nil
 }
