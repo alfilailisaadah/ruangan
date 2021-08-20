@@ -3,21 +3,20 @@ package buildings
 import (
 	"context"
 	"rentRoom/businesses"
-	"rentRoom/businesses/rooms"
 	"strings"
 	"time"
 )
 
 type buildingsUsecase struct {
 	buildingsRepository  Repository
-	roomsUsecase rooms.Usecase
+	// roomsUsecase rooms.Usecase
 	contextTimeout  time.Duration
 }
 
-func NewBuildingsUsecase(nr Repository, cu rooms.Usecase, timeout time.Duration) Usecase {
+func NewBuildingsUsecase(nr Repository, timeout time.Duration) Usecase {
 	return &buildingsUsecase{
 		buildingsRepository:  nr,
-		roomsUsecase: cu,
+		// roomsUsecase: cu,
 		contextTimeout:  timeout,
 	}
 }
@@ -68,7 +67,7 @@ func (nu *buildingsUsecase) GetByTitle(ctx context.Context, buildingsTitle strin
 
 	return res, nil
 }
-func (nu *buildingsUsecase) Store(ctx context.Context, ip string, buildingsDomain *Domain) (Domain, error) {
+func (nu *buildingsUsecase) Store(ctx context.Context, buildingsDomain *Domain) (Domain, error) {
 	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
 	defer cancel()
 
