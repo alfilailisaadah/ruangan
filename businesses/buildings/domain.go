@@ -17,7 +17,7 @@ type Usecase interface {
 	Fetch(ctx context.Context, page, perpage int) ([]Domain, int, error)
 	GetByID(ctx context.Context, buildingsId int) (Domain, error)
 	GetByTitle(ctx context.Context, buildingsTitle string) (Domain, error)
-	Store(ctx context.Context, ip string, buildingsDomain *Domain) (Domain, error)
+	Store(ctx context.Context, buildingsDomain *Domain) (Domain, error)
 	GetAll(ctx context.Context) ([]Domain, error)
 }
 

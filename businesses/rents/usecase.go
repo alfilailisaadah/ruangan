@@ -15,10 +15,9 @@ type rentsUsecase struct {
 	contextTimeout  time.Duration
 }
 
-func NewRentsUsecase(nr Repository, cu rooms.Usecase, timeout time.Duration) Usecase {
+func NewRentsUsecase(nr Repository, timeout time.Duration) Usecase {
 	return &rentsUsecase{
 		rentsRepository:  nr,
-		roomsUsecase: cu,
 		contextTimeout:  timeout,
 	}
 }

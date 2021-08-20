@@ -23,14 +23,12 @@ func NewBuildingsController(buildingsUC buildings.Usecase) *BuildingsController 
 func (ctrl *BuildingsController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	ip := c.QueryParam("ip")
-
 	req := request.Buildings{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	resp, err := ctrl.buildingsUseCase.Store(ctx, ip, req.ToDomain())
+	resp, err := ctrl.buildingsUseCase.Store(ctx, req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

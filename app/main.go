@@ -76,11 +76,11 @@ func main() {
 	roomsCtrl := _roomsController.NewRoomsController(roomsUsecase)
 
 	rentsRepo := _rentsRepo.NewRentsRepository(db)
-	rentsUsecase := _rentsUsecase.NewRentsUsecase(rentsRepo, roomsUsecase, timeoutContext)
+	rentsUsecase := _rentsUsecase.NewRentsUsecase(rentsRepo,timeoutContext)
 	rentsCtrl := _rentsController.NewRentsController(rentsUsecase)
 
 	buildingsRepo := _buildingsRepo.NewMySQLBuidingsRepository(db)
-	buildingsUsecase := _buildingsUsecase.NewBuildingsUsecase(buildingsRepo, roomsUsecase, timeoutContext)
+	buildingsUsecase := _buildingsUsecase.NewBuildingsUsecase(buildingsRepo,timeoutContext)
 	buildingsCtrl := _buildingsController.NewBuildingsController(buildingsUsecase)
 
 	userRepo := _userRepo.NewMySQLUserRepository(db)
